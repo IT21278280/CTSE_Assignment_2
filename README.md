@@ -1,4 +1,3 @@
-Certainly! Here's the same `README.md` with all emojis removed, for a more professional and minimalist look:
 
 ```markdown
 # CTSE Lecture Notes Chatbot
