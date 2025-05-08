@@ -1,5 +1,4 @@
 
-```markdown
 # CTSE Lecture Notes Chatbot
 
 ## Overview
