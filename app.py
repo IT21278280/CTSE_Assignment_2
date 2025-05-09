@@ -85,14 +85,14 @@ def load_and_process_documents():
     return chunks
 
 @st.cache_resource
-def setup_vector_store(chunks):
+def setup_vector_store(_chunks):  # Use _chunks to avoid hashing
     logging.info("Setting up vector store...")
     faiss_index_path = './faiss_index'
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
     if os.path.exists(faiss_index_path):
         vector_store = FAISS.load_local(faiss_index_path, embeddings, allow_dangerous_deserialization=True)
     else:
-        vector_store = FAISS.from_documents(chunks, embeddings)
+        vector_store = FAISS.from_documents(_chunks, embeddings)
         vector_store.save_local(faiss_index_path)
     return vector_store
 
@@ -153,6 +153,11 @@ def ask_question(question):
             return f"Error: Unable to process question. {e}", ""
     return "Chatbot not initialized.", ""
 
+# Clear chat history button
+if st.button("Clear Chat"):
+    st.session_state.chat_history = []
+    st.experimental_rerun()
+
 # Input for user question
 question = st.text_input("Ask a question about CTSE Software Engineering:")
 if st.button("Ask"):
@@ -160,8 +165,6 @@ if st.button("Ask"):
         answer, source = ask_question(question)
         st.session_state.chat_history.append({"question": question, "answer": answer, "source": source})
         st.experimental_rerun()
-
-
 
 # import streamlit as st
 # from langchain.document_loaders import PyPDFDirectoryLoader
