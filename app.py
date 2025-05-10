@@ -21,69 +21,177 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Specify Tesseract path (Windows example; adjust for your system)
 # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Uncomment and adjust if needed
 
-# Custom CSS for enhanced UI/UX
+# Custom CSS for clean and modern UI/UX without gradients
 st.markdown(
     """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    * {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Background with a solid light color */
     .main {
-        background-color: #f0f2f6;
-        padding: 20px;
-        border-radius: 10px;
+        background: #F5F5F5; /* Soft white background */
+        min-height: 100vh;
+        padding: 30px;
     }
-    .stTextInput > div > div > input {
-        border-radius: 5px;
-        padding: 10px;
-        font-size: 16px;
+
+    /* Title styling with a bold primary color */
+    .title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #26A69A; /* Teal primary color */
+        margin-bottom: 30px;
+        transition: color 0.3s ease;
     }
-    .stButton > button {
-        background-color: #4CAF50;
-        color: white;
-        border-radius: 5px;
-        padding: 10px 20px;
-        font-weight: bold;
-        font-size: 16px;
+
+    .title:hover {
+        color: #FF6F61; /* Coral accent on hover */
     }
-    .stButton > button:hover {
-        background-color: #45a049;
+
+    /* Expander styling for chat history */
+    .st-expander {
+        background: transparent;
+        border: none;
+        box-shadow: none;
     }
+
+    .st-expander summary {
+        color: #26A69A; /* Teal for header */
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    /* Chat container with a clean card design */
     .chat-container {
-        background-color: #ffffff;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        background: #FFFFFF; /* White card background */
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
     }
+
+    .chat-container:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        transform: translateY(-3px);
+    }
+
+    /* Styling for user and bot messages with solid colors */
+    .user-message, .bot-message {
+        margin-bottom: 10px;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .user-message {
+        background: #E0F7FA; /* Light teal for user */
+        color: #2E2E2E; /* Dark slate text */
+        margin-left: 20%;
+        margin-right: 5%;
+    }
+
+    .bot-message {
+        background: #FCE4EC; /* Light coral for bot */
+        color: #2E2E2E;
+        margin-right: 20%;
+        margin-left: 5%;
+    }
+
+    .user-message strong, .bot-message strong {
+        color: #26A69A; /* Teal for labels */
+    }
+
+    /* Source box with a subtle border */
     .source-box {
-        background-color: #f9f9f9;
+        background: #F5F5F5; /* Matching background */
         padding: 10px;
-        border-left: 4px solid #4CAF50;
+        border-left: 4px solid #26A69A; /* Teal border */
         border-radius: 5px;
-        font-size: 14px;
+        font-size: 0.9rem;
+        color: #2E2E2E;
         margin-top: 10px;
+    }
+
+    /* Input field with a clean, modern look */
+    .stTextInput > div > div > input {
+        background: #FFFFFF;
+        color: #2E2E2E;
+        border: 2px solid #B0BEC5; /* Light gray border */
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stTextInput > div > div > input:focus {
+        border-color: #26A69A; /* Teal on focus */
+        box-shadow: 0 0 8px rgba(38, 166, 154, 0.3);
+    }
+
+    /* Button with a vibrant solid color and hover effect */
+    .stButton > button {
+        background: #FF6F61; /* Coral button */
+        color: #FFFFFF;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 25px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-transform: uppercase;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .stButton > button:hover {
+        background: #EF5350; /* Darker coral on hover */
+        transform: scale(1.03);
+    }
+
+    /* Placeholder text for no chat history */
+    .no-chat {
+        color: #78909C; /* Muted gray */
+        text-align: center;
+        font-style: italic;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Title with emoji and styling
-st.markdown("<h1 style='text-align: center; color: #2c3e50;'>CTSE Lecture Notes Chatbot ✨ (LLaMA3 + LangChain)</h1>", unsafe_allow_html=True)
+# Set favicon with emoji
+st.markdown(
+    """
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>✨</text></svg>">
+    """,
+    unsafe_allow_html=True
+)
+
+# Title with enhanced styling
+st.markdown("<h1 class='title'>CTSE Lecture Notes Chatbot ✨ (Gemma:2b + LangChain)</h1>", unsafe_allow_html=True)
 
 # Initialize session state for chat history
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-# Display chat history with enhanced UI/UX
+# Display chat history with modern UI/UX
 with st.expander("Chat History", expanded=True):
     if not st.session_state.chat_history:
-        st.markdown("<p style='color: #666;'>No questions asked yet. Start by asking a question below!</p>", unsafe_allow_html=True)
+        st.markdown("<p class='no-chat'>No questions asked yet. Start by asking a question below!</p>", unsafe_allow_html=True)
     for chat in st.session_state.chat_history:
         with st.container():
             st.markdown(
                 f"""
                 <div class="chat-container">
-                    <strong style="color: #2c3e50;">You:</strong> {chat['question']}<br>
-                    <strong style="color: #2c3e50;">Bot:</strong> {chat['answer']}<br>
+                    <div class="user-message"><strong>You:</strong> {chat['question']}</div>
+                    <div class="bot-message"><strong>Bot:</strong> {chat['answer']}</div>
                     <div class="source-box">
                         <strong>Source:</strong><br>
                         {chat['source']}
@@ -283,7 +391,6 @@ if st.button("Ask", key="ask_button"):
 
 
 
-
 # import streamlit as st
 # from langchain.document_loaders import PyPDFDirectoryLoader
 # from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -456,9 +563,9 @@ if st.button("Ask", key="ask_button"):
 
 # @st.cache_resource
 # def setup_llm():
-#     logging.info("Initializing Ollama LLM with TinyLLaMA...")
+#     logging.info("Initializing Ollama LLM with Gemma:2b...")
 #     try:
-#         return OllamaLLM(model="tinyllama", temperature=0.3)
+#         return OllamaLLM(model="gemma:2b", temperature=0.3)
 #     except Exception as e:
 #         logging.error(f"Error initializing Ollama: {e}")
 #         st.error(f"Error initializing Ollama: {e}")
@@ -468,7 +575,7 @@ if st.button("Ask", key="ask_button"):
 # def setup_qa_chain(_vector_store, _llm):  # Use _vector_store and _llm to avoid hashing
 #     logging.info("Building RAG pipeline...")
 #     prompt_template = """
-#     You are a knowledgeable assistant for Current Trends in Software Engineering (CTSE). Your task is to provide a clear, concise, and accurate answer to the user's question based solely on the provided lecture notes. Focus on the specific topic asked (e.g., horizontal scaling, load balancing) and avoid including unrelated topics like Hadoop components unless directly relevant. Use bullet points or short paragraphs for clarity, and keep the response concise. If the information is not available, state that clearly.
+#     You are a specialized assistant for Current Trends in Software Engineering (CTSE) lecture notes. Your task is to provide a clear, concise, and accurate answer using *only* the exact text from the provided CTSE lecture notes. Copy the relevant sentence(s) or phrase(s) directly from the context without adding, modifying, or elaborating on the content. Use bullet points or short sentences for clarity. If the question is unrelated to CTSE lecture notes (e.g., sports, general knowledge), respond exactly with: 'This question is outside the scope of CTSE lecture notes. Please ask about topics from the lecture notes.' If no relevant information is found, respond exactly with: 'No relevant information found in the CTSE lecture notes.'
 
 #     Context: {context}
 #     Question: {question}
@@ -479,7 +586,7 @@ if st.button("Ask", key="ask_button"):
 #     return RetrievalQA.from_chain_type(
 #         llm=_llm,
 #         chain_type="stuff",
-#         retriever=_vector_store.as_retriever(search_kwargs={"k": 2}),
+#         retriever=_vector_store.as_retriever(search_kwargs={"k": 3}),
 #         return_source_documents=True,
 #         chain_type_kwargs={"prompt": prompt}
 #     )
@@ -516,25 +623,25 @@ if st.button("Ask", key="ask_button"):
 #                 temp_qa_chain = RetrievalQA.from_chain_type(
 #                     llm=llm,
 #                     chain_type="stuff",
-#                     retriever=temp_vector_store.as_retriever(search_kwargs={"k": 2}),
+#                     retriever=temp_vector_store.as_retriever(search_kwargs={"k": 3}),
 #                     return_source_documents=True,
 #                     chain_type_kwargs={"prompt": qa_chain.combine_documents_chain.llm_chain.prompt}
 #                 )
 #                 result = temp_qa_chain.invoke({"query": question})
 #             else:
-#                 # For general questions, use the main vector store with a keyword filter
-#                 keywords = question.lower().split()
+#                 # For general questions, use the main vector store with a refined keyword filter
+#                 keywords = [word for word in question.lower().split() if word not in ['what', 'is', 'in', 'the', 'a', 'an']]
 #                 filtered_docs = [
 #                     doc for doc in chunks
 #                     if any(keyword in doc.page_content.lower() for keyword in keywords)
 #                 ]
 #                 if not filtered_docs:
-#                     return "No relevant information found in the lecture notes for this question.", ""
+#                     return "No relevant information found in the CTSE lecture notes.", ""
 #                 temp_vector_store = FAISS.from_documents(filtered_docs, HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2"))
 #                 temp_qa_chain = RetrievalQA.from_chain_type(
 #                     llm=llm,
 #                     chain_type="stuff",
-#                     retriever=temp_vector_store.as_retriever(search_kwargs={"k": 2}),
+#                     retriever=temp_vector_store.as_retriever(search_kwargs={"k": 3}),
 #                     return_source_documents=True,
 #                     chain_type_kwargs={"prompt": qa_chain.combine_documents_chain.llm_chain.prompt}
 #                 )
@@ -559,6 +666,13 @@ if st.button("Ask", key="ask_button"):
 #         answer, source = ask_question(question)
 #         st.session_state.chat_history.append({"question": question, "answer": answer, "source": source})
 #         st.rerun()
+
+
+
+
+
+
+
 
 
 
