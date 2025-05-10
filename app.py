@@ -170,9 +170,9 @@ def setup_vector_store(_chunks):  # Use _chunks to avoid hashing
 
 @st.cache_resource
 def setup_llm():
-    logging.info("Initializing Ollama LLM with TinyLLaMA...")
+    logging.info("Initializing Ollama LLM with Gemma:2b...")
     try:
-        return OllamaLLM(model="tinyllama", temperature=0.3)
+        return OllamaLLM(model="gemma:2b", temperature=0.3)
     except Exception as e:
         logging.error(f"Error initializing Ollama: {e}")
         st.error(f"Error initializing Ollama: {e}")
@@ -182,7 +182,7 @@ def setup_llm():
 def setup_qa_chain(_vector_store, _llm):  # Use _vector_store and _llm to avoid hashing
     logging.info("Building RAG pipeline...")
     prompt_template = """
-    You are a specialized assistant for Current Trends in Software Engineering (CTSE) lecture notes. Your task is to provide a clear, concise, and accurate answer based *only* on the provided CTSE lecture notes content. Answer the user's question directly using the exact context provided, avoiding any elaboration, assumptions, or information not present in the notes. Use bullet points or short sentences for clarity. If the question is unrelated to CTSE lecture notes (e.g., sports, general knowledge), respond with: 'This question is outside the scope of CTSE lecture notes. Please ask about topics from the lecture notes.' If the information is not available in the notes, state: 'No relevant information found in the CTSE lecture notes.'
+    You are a specialized assistant for Current Trends in Software Engineering (CTSE) lecture notes. Your task is to provide a clear, concise, and accurate answer using *only* the exact text from the provided CTSE lecture notes. Copy the relevant sentence(s) or phrase(s) directly from the context without adding, modifying, or elaborating on the content. Use bullet points or short sentences for clarity. If the question is unrelated to CTSE lecture notes (e.g., sports, general knowledge), respond exactly with: 'This question is outside the scope of CTSE lecture notes. Please ask about topics from the lecture notes.' If no relevant information is found, respond exactly with: 'No relevant information found in the CTSE lecture notes.'
 
     Context: {context}
     Question: {question}
@@ -193,7 +193,7 @@ def setup_qa_chain(_vector_store, _llm):  # Use _vector_store and _llm to avoid 
     return RetrievalQA.from_chain_type(
         llm=_llm,
         chain_type="stuff",
-        retriever=_vector_store.as_retriever(search_kwargs={"k": 2}),
+        retriever=_vector_store.as_retriever(search_kwargs={"k": 3}),
         return_source_documents=True,
         chain_type_kwargs={"prompt": prompt}
     )
@@ -230,14 +230,14 @@ def ask_question(question):
                 temp_qa_chain = RetrievalQA.from_chain_type(
                     llm=llm,
                     chain_type="stuff",
-                    retriever=temp_vector_store.as_retriever(search_kwargs={"k": 2}),
+                    retriever=temp_vector_store.as_retriever(search_kwargs={"k": 3}),
                     return_source_documents=True,
                     chain_type_kwargs={"prompt": qa_chain.combine_documents_chain.llm_chain.prompt}
                 )
                 result = temp_qa_chain.invoke({"query": question})
             else:
-                # For general questions, use the main vector store with a keyword filter
-                keywords = question.lower().split()
+                # For general questions, use the main vector store with a refined keyword filter
+                keywords = [word for word in question.lower().split() if word not in ['what', 'is', 'in', 'the', 'a', 'an']]
                 filtered_docs = [
                     doc for doc in chunks
                     if any(keyword in doc.page_content.lower() for keyword in keywords)
@@ -248,7 +248,7 @@ def ask_question(question):
                 temp_qa_chain = RetrievalQA.from_chain_type(
                     llm=llm,
                     chain_type="stuff",
-                    retriever=temp_vector_store.as_retriever(search_kwargs={"k": 2}),
+                    retriever=temp_vector_store.as_retriever(search_kwargs={"k": 3}),
                     return_source_documents=True,
                     chain_type_kwargs={"prompt": qa_chain.combine_documents_chain.llm_chain.prompt}
                 )
